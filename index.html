@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>try{var d=document.documentElement,g=function(k){return localStorage.getItem('jammmyslots_'+k)};d.setAttribute('data-theme',g('theme')||'cosmic');d.setAttribute('data-style',g('style')||'classic')}catch(e){}</script>
+<script>try{var d=document.documentElement,g=function(k){return localStorage.getItem('jammmyslots_'+k)};d.setAttribute('data-theme','cosmic');d.setAttribute('data-style','classic')}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Jamminslots</title>
@@ -1336,6 +1336,41 @@
   @keyframes wave-sweep{ 0%{ transform:translateY(110vh); } 38%,52%{ transform:translateY(-30vh); } 100%{ transform:translateY(-185vh); } }
   @keyframes wave-slide{ to{ background-position:300px 0, 0 0; } }
   @media (prefers-reduced-motion: reduce){ .jam-wave.go{ animation-duration:.3s; } }
+
+  /* ===================== v8: fixes from playtesting ===================== */
+  /* bursting symbols: a clean pop in place (the win animation stops first) */
+  .cell.burst .sa{ display:none !important; }
+  .cell.burst img.sym{ visibility:visible !important; }
+  html:not(#_):not(#__) .cell.burst{ transform-origin:50% 50%; animation:pop-burst2 .3s cubic-bezier(.3,0,.7,1) forwards; }
+  @keyframes pop-burst2{ 0%{ transform:scale(1); opacity:1; filter:brightness(1); } 45%{ transform:scale(1.22); opacity:1; filter:brightness(1.7); } 100%{ transform:scale(.15); opacity:0; filter:brightness(2.4); } }
+  .jar-count{ display:none !important; }
+  /* free spins: big "SPIN 3 / 12" over the reels */
+  .fsc4{ position:absolute; left:50%; top:-4px; translate:-50% 0; z-index:60; display:none; align-items:center; gap:10px; padding:4px 22px 5px; border-radius:0 0 18px 18px; background:linear-gradient(180deg,#2a0f52,#160630); box-shadow:0 0 0 3px #ffcf55, 0 8px 22px rgba(0,0,0,.55); white-space:nowrap; }
+  .game.fs-mode .fsc4{ display:flex; }
+  .fsc4 .l{ font:800 13px Poppins,system-ui,sans-serif; letter-spacing:.14em; color:#f5d0fe; }
+  .fsc4 .n{ font-size:34px; display:inline-flex; align-items:center; }
+  .fsc4 .sl{ font-family:'Luckiest Guy',cursive; font-size:30px; color:#ffcf55; -webkit-text-stroke:3px #5a2a00; paint-order:stroke fill; margin:0 2px; }
+  .fsc4.fsbump .n:first-of-type{ animation:tw-bump .4s cubic-bezier(.2,1.8,.4,1); }
+  .game.portrait .fsc4 .n{ font-size:28px; } .game.portrait .fsc4 .l{ font-size:11px; }
+  html:not(#_):not(#__) .fs-badge{ display:none !important; }
+  .marquee{ transition:opacity .3s; } .game.fs-mode .marquee{ opacity:0; }
+  /* congratulations screen */
+  .fs-overlay-kicker{ font-family:'Luckiest Guy',cursive !important; font-size:clamp(26px,5vmin,46px) !important; letter-spacing:.04em !important; color:#fff !important; -webkit-text-stroke:5px #5b1a9a; paint-order:stroke fill; animation:i4-drop .8s cubic-bezier(.2,1.4,.35,1) both; }
+  .fs-overlay-amount::before{ content:attr(data-pre) " "; }
+  /* buy menu: a centered confirm, and a clear reason when a card can't be bought */
+  html:not(#_):not(#__) .feat-confirm{ position:absolute; left:50%; top:50%; translate:-50% -50%; z-index:5; flex-direction:column; gap:12px; padding:20px 26px; min-width:320px; text-align:center; background:#1a0838; border:2px solid #ffcf55; border-radius:18px; box-shadow:0 0 0 999px rgba(8,2,20,.6), 0 20px 50px rgba(0,0,0,.6); font-size:17px; }
+  html:not(#_):not(#__) .feat-confirm .sp{ display:none; }
+  html:not(#_):not(#__) .feat-confirm .yes, html:not(#_):not(#__) .feat-confirm .no{ min-width:130px; font-size:16px; padding:12px 18px; }
+  .feat-confirm .btns{ display:flex; gap:10px; justify-content:center; }
+  .fcard.poor .fc-btn{ background:#9ca3af !important; color:#fff !important; font-size:11px; }
+  /* multipliers: clean glow, no cheap rays, a proper value plate */
+  .jorb .rays{ display:none !important; }
+  .jorb{ width:200px !important; height:200px !important; margin:-100px 0 0 -100px !important; }
+  .jorb .glow{ inset:-12% !important; filter:blur(6px); }
+  .jorb .jv{ bottom:-18px !important; padding:4px 14px 6px; border-radius:999px; background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55)), var(--pc,#333); box-shadow:0 0 0 3px #ffcf55, 0 0 22px var(--og), 0 6px 12px rgba(0,0,0,.5); font-size:40px !important; filter:none !important; }
+  .jorb.t1{ --pc:#0d7a35; } .jorb.t2{ --pc:#1240b8; } .jorb.t3{ --pc:#6a12c4; } .jorb.t4{ --pc:#b00c26; } .jorb.t5{ --pc:linear-gradient(90deg,#ff4f8a,#ffa23a,#ffe14a,#5fe07a,#4aa8ff,#9b5cff); }
+  .jorb.t5 .jv{ font-size:48px !important; }
+  .orb-trail{ position:absolute; z-index:29; width:22px; margin-left:-11px; border-radius:11px; pointer-events:none; background:linear-gradient(180deg, transparent, var(--og)); opacity:.9; }
 </style>
 </head>
 <body>
@@ -1547,7 +1582,7 @@
       <div class="fc-sw"></div>
     </button>
   </div>
-  <div class="feat-confirm" id="featConfirm"><span id="featConfirmText"></span><span class="sp"></span><button class="no" id="featNo">Cancel</button><button class="yes" id="featYes">Buy now</button></div>
+  <div class="feat-confirm" id="featConfirm"><span id="featConfirmText"></span><span class="sp"></span><span class="btns"><button class="no" id="featNo">Cancel</button><button class="yes" id="featYes">Buy now</button></span></div>
   <div class="feat-foot">Every option is tuned to about <b data-bind="rtp"></b> RTP &middot; max win <b data-bind="cap"></b> your bet (<span data-bind="dgCap"></span>&times; in Degen Mode)</div>
 </div>
 
@@ -2317,14 +2352,14 @@ function createAudio(ctx, dest){
   menuPop.innerHTML = '<button class="mrow" data-a="info"><span class="ic">ℹ️</span>INFO &amp; PAYTABLE</button>'
     + '<div class="mrow"><span class="ic">🔊</span><input type="range" min="0" max="100" id="mSfx" aria-label="Sound volume"></div>'
     + '<div class="mrow"><span class="ic">🎵</span><input type="range" min="0" max="100" id="mMus" aria-label="Music volume"></div>'
-    + '<button class="mrow" data-a="fs"><span class="ic">⛶</span>FULLSCREEN</button><button class="mrow" data-a="style"><span class="ic">🎨</span>STYLE &amp; CALM MODE</button><button class="mrow" data-a="reset"><span class="ic">↺</span>RESET BALANCE</button>';
+    + '<button class="mrow" data-a="fs"><span class="ic">⛶</span>FULLSCREEN</button><button class="mrow" data-a="calm"><span class="ic">🍃</span><span class="cl">CALM MODE: OFF</span></button><button class="mrow" data-a="reset"><span class="ic">↺</span>RESET BALANCE</button>';
   game.appendChild(menuPop);
   const mSfx = menuPop.querySelector('#mSfx'), mMus = menuPop.querySelector('#mMus');
   const syncSliders = ()=>{ mSfx.value = Math.round(volSfx*100); mMus.value = Math.round(volMusic*100); };
   mSfx.addEventListener('input', ()=>{ volSfxEl.value = mSfx.value; volSfxEl.dispatchEvent(new Event('input')); if(!soundOn && +mSfx.value > 0) $('soundBtn').click(); });
   mMus.addEventListener('input', ()=>{ volMusicEl.value = mMus.value; volMusicEl.dispatchEvent(new Event('input')); if(!musicPref && +mMus.value > 0) $('musicBtn').click(); });
   menuPop.querySelectorAll('button.mrow').forEach(b=> b.addEventListener('click', ()=>{ sfxClick(); closePops(); const a = b.dataset.a;
-    if(a === 'info') openSheet(); else if(a === 'fs') $('fsBtn').click(); else if(a === 'style') $('themeBtn').click(); else if(a === 'reset') $('resetBtn').click(); }));
+    if(a === 'info') openSheet(); else if(a === 'fs') $('fsBtn').click(); else if(a === 'calm'){ const on = !game.classList.contains('lite'); document.dispatchEvent(new CustomEvent('jamfx', {detail: on ? 'calm' : 'auto'})); b.querySelector('.cl').textContent = 'CALM MODE: ' + (on ? 'ON' : 'OFF'); try{ localStorage.setItem('jammmyslots_fx', on ? 'calm' : 'auto'); }catch(e){} } else if(a === 'reset') $('resetBtn').click(); }));
 
   function bump(el){ el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'), 180); }
   /* ===== bonus menu: ante bet, bonus buys, mystery bonus, Degen Mode ===== */
@@ -2347,7 +2382,7 @@ function createAudio(ctx, dest){
   function refreshFeat(){
     $('featBet').textContent = BET_STEPS[betIndex];
     featModal.querySelectorAll('[data-cost]').forEach(e=>{ e.textContent = buyCost(e.dataset.cost).toLocaleString(); });
-    featModal.querySelectorAll('[data-buy]').forEach(b=>{ b.disabled = degenOn || balance < buyCost(b.dataset.buy); b.classList.toggle('sel', featPick === b.dataset.buy); });
+    featModal.querySelectorAll('[data-buy]').forEach(b=>{ const poor = balance < buyCost(b.dataset.buy); b.disabled = degenOn || poor; b.classList.toggle('poor', poor && !degenOn); b.classList.toggle('sel', featPick === b.dataset.buy); const fb = b.querySelector('.fc-btn'); if(fb) fb.textContent = degenOn ? 'OFF IN DEGEN MODE' : poor ? 'NOT ENOUGH CREDITS' : 'BUY'; });
     if(featPick && (degenOn || balance < buyCost(featPick))) featPick = null;
     fcAnte.classList.toggle('on', anteOn && !degenOn); fcAnte.setAttribute('aria-pressed', anteOn && !degenOn); fcAnte.disabled = degenOn;
     fcDegen.classList.toggle('on', degenOn); fcDegen.setAttribute('aria-pressed', degenOn);
@@ -2641,6 +2676,9 @@ function createAudio(ctx, dest){
   const WAVE_COL = { jam:['#9b4dff','#6d28d9'], super:['#ffb52a','#d97706'], epic:['#ff2d6f','#a0003a'], dead:['#71717a','#3f3f46'], end:['#ff2d6f','#c0126a'] };
   function jamWave(key, label){ const c = WAVE_COL[key] || WAVE_COL.jam; jamWaveEl.style.setProperty('--w1', c[0]); jamWaveEl.style.setProperty('--w2', c[1]); jamWaveEl.querySelector('b').textContent = label || '';
     jamWaveEl.classList.remove('go'); void jamWaveEl.offsetWidth; jamWaveEl.classList.add('go'); playSfx('waveWhoosh', key === 'epic' ? 2 : key === 'super' ? 1 : 0); haptic([20,40,60]); }
+  let fsTotal = 0, fsPlayed = 0;
+  const fsCountEl = document.createElement('div'); fsCountEl.className = 'fsc4'; fsCountEl.innerHTML = '<span class="l">FREE SPIN</span><span class="n"></span><span class="sl">/</span><span class="n"></span>'; document.querySelector('.frame-wrap').appendChild(fsCountEl);
+  function fsCount(pop){ const n = fsCountEl.querySelectorAll('.n'); goldNum(n[0], String(Math.max(0, Math.min(fsPlayed, fsTotal)))); goldNum(n[1], String(fsTotal)); if(pop){ fsCountEl.classList.remove('fsbump'); void fsCountEl.offsetWidth; fsCountEl.classList.add('fsbump'); } }
   function startBonus(tierKey, kicker){ spinBtn.disabled = true; jamWave(tierKey, TIERS[tierKey] ? TIERS[tierKey].name : ''); setTimeout(()=> startBonusCore(tierKey, kicker), 520); }
   function startBonusCore(tierKey, kicker){
     const t = TIERS[tierKey]; bonusTier = tierKey;
@@ -2651,9 +2689,10 @@ function createAudio(ctx, dest){
     $('fsBadgeTitle').textContent = t.name;
     updateFsUI();
     fsOverlay.classList.remove('tier-jam','tier-super','tier-epic','tier-dead'); fsOverlay.classList.add('tier-' + tierKey);
-    fsOverlayKicker.textContent = (kicker || 'bonus').toUpperCase();
-    fsOverlayTitle.textContent = t.name + '!';
-    fsOverlayAmount.textContent = t.spins;
+    fsOverlayKicker.textContent = 'CONGRATULATIONS!';
+    fsOverlayTitle.textContent = t.name;
+    fsOverlayAmount.textContent = t.spins; fsTotal = t.spins; fsPlayed = 0; fsCount();
+    fsOverlay.querySelector('.fs-overlay-amount').dataset.pre = 'YOU WON';
     fsPerks.innerHTML = (t.dead ? ['Nothing can win', 'Unlucky this time'] : tierPerks(t)).map(x=>'<span>' + x + '</span>').join('');
     fsOverlay.classList.add('show'); setMusicMode(t.music); syncMusic();
     if(t.dead){ playSfx('deadOn'); haptic([60,80,60]); } else { fsJar.party(true); sfxFsStart(t.idx); launchCoinRain(14 + t.idx*8); }
@@ -2663,7 +2702,7 @@ function createAudio(ctx, dest){
     if(t.idx){ setTimeout(()=>{ FX.ring(cx, cy, '#fff', 520); FX.burst(cx, cy, '#fff', 40*t.idx, 900); }, 450); if(!reduceMotion){ game.classList.remove('shake'); void game.offsetWidth; game.classList.add('shake'); setTimeout(()=>game.classList.remove('shake'), 650); } }
     setTimeout(()=>{ fsOverlay.classList.remove('show'); coinRain.innerHTML=''; syncMusic(); mascot.loop(true); runFreeSpin(); }, 2300 + t.idx*500);
   }
-  function runFreeSpin(){ if(!spinning){ fsCall = true; try{ spin(); } finally { fsCall = false; } } }
+  function runFreeSpin(){ if(!spinning){ fsPlayed++; fsCount(true); fsCall = true; try{ spin(); } finally { fsCall = false; } } }
   async function endFreeSpins(){
     const t = TIERS[bonusTier] || TIERS.jam, bet = BET_STEPS[betIndex];
     inFreeSpins = false; game.classList.remove('tier-jam','tier-super','tier-epic','tier-dead');
@@ -2974,7 +3013,15 @@ function createAudio(ctx, dest){
     o.style.left = from.x + 'px'; o.style.top = from.y + 'px'; game.appendChild(o);
     if(tier === 5){ cosmicDim.style.setProperty('--cx', from.x + 'px'); cosmicDim.style.setProperty('--cy', from.y + 'px'); cosmicDim.classList.add('on');
       for(let k=0;k<3;k++) setTimeout(()=> FX.burst(fp.x, fp.y, ['#ff6bd5','#ffe24a','#4ad6ff'][k], 30, 520), 250 + k*180); }
-    await o.animate(spec.k, {duration:spec.d, easing:spec.e, fill:'forwards'}).finished.catch(()=>{});
+    // every multiplier falls into its cell from above the reels, leaves a light trail, and lands with a squash; bigger ones hang first, then slam
+    const top = gpos(reelsAreaEl).y - reelsAreaEl.offsetHeight/2, fallY = Math.max(160, from.y - top + 140);
+    const tr = document.createElement('div'); tr.className = 'orb-trail'; tr.style.setProperty('--og', getComputedStyle(o).getPropertyValue('--og')); tr.style.left = from.x + 'px'; tr.style.top = (from.y - fallY) + 'px'; tr.style.height = '0px'; game.appendChild(tr);
+    const hang = tier >= 4 ? (tier === 5 ? 0.42 : 0.3) : 0, dur = [480, 520, 560, 760, 1250][tier-1];
+    const k = [{transform:'translateY(' + (-fallY) + 'px) scale(.7) rotate(-12deg)', opacity:0, offset:0}];
+    if(hang) k.push({transform:'translateY(' + (-fallY*0.92) + 'px) scale(' + (tier === 5 ? 1.5 : 1.25) + ') rotate(8deg)', opacity:1, offset:hang*0.6}, {transform:'translateY(' + (-fallY*0.9) + 'px) scale(' + (tier === 5 ? 1.45 : 1.2) + ') rotate(-4deg)', opacity:1, offset:hang});
+    k.push({transform:'translateY(0) scale(1.18,.82) rotate(0)', opacity:1, offset:hang + (1 - hang)*0.62}, {transform:'translateY(-16px) scale(.94,1.07)', opacity:1, offset:hang + (1 - hang)*0.82}, {transform:'translateY(0) scale(1)', opacity:1, offset:1});
+    tr.animate([{height:'0px', opacity:0}, {height:'0px', opacity:.9, offset:hang || 0.01}, {height:fallY + 'px', opacity:.9, offset:hang + (1 - hang)*0.62}, {height:fallY + 'px', opacity:0}], {duration:dur + 200, easing:'ease-in', fill:'forwards'}).finished.then(()=> tr.remove()).catch(()=> tr.remove());
+    await o.animate(k, {duration:dur, easing:'cubic-bezier(.5,0,.75,0)', fill:'forwards'}).finished.catch(()=>{});
     // impact
     FX.ring(fp.x, fp.y, col, 90 + tier*40); FX.burst(fp.x, fp.y, col, 12 + tier*12, 220 + tier*90);
     if(tier >= 3) FX.burst(fp.x, fp.y, '#ffffff', tier*8, 300 + tier*60);
@@ -3128,7 +3175,6 @@ function createAudio(ctx, dest){
     else if(degenMax) await showBigWin(spinTotal, {max:true, kicker:'DEGEN MODE', sub:DEGEN.cap + '× YOUR BET', quick:true});
     else if(ratio >= (fs ? FS_CELEBRATE_X : WIN_TIERS[0][0])) await showBigWin(spinTotal);
     else if(spinTotal >= bet && !fs){ smallCoinBurst(); flyCoins(Math.min(8, 3 + Math.floor(ratio))); sfxTally(650); }
-    if(spinTotal === 0 && fs) setMessage('Free Spin — no win', false);
     spinning = false; saveBalance(); updateStats();
     clearTimeout(fsTimer);
     // 5) what happens next
@@ -3137,7 +3183,7 @@ function createAudio(ctx, dest){
       if(scatterCount >= 3){
         const awarded = RETRIG[Math.min(scatterCount,5)];
         freeSpinsLeft += awarded - 1;                                  // the spin that retriggered still counts as played
-        updateFsUI(); setMessage('+' + awarded + ' FREE SPINS!', true); banner('+' + awarded + ' FREE SPINS'); sfxRetrigger(awarded);
+        fsTotal += awarded; fsCount(); updateFsUI(); setMessage('+' + awarded + ' FREE SPINS!', true); banner('+' + awarded + ' FREE SPINS'); sfxRetrigger(awarded);
         fsTimer = setTimeout(runFreeSpin, 1700); return;
       }
       freeSpinsLeft -= 1; updateFsUI();
@@ -3151,7 +3197,7 @@ function createAudio(ctx, dest){
       return;
     }
     spinBtn.disabled = false;
-    if(spinTotal > 0) spinBtn.classList.add('pulsing'); else setMessage(degen ? 'No win — go again' : 'No win — spin again', false);
+    if(spinTotal > 0) spinBtn.classList.add('pulsing'); else setMessage('', false);
     if(balance < spinCost()) { if(balance <= 0) setMessage('Out of credits — tap ↺ to reset', false); if(auto){ auto = false; autoBtn.classList.remove('active'); } }
     if(auto){ clearTimeout(autoTimer); autoTimer = setTimeout(()=>{ if(auto) spin(); }, spinTotal > 0 ? 700 : 350); }
   }
