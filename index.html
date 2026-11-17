@@ -1416,7 +1416,7 @@
     <button class="fcard" data-buy="mystery" style="--c:#f472b6;--i:3">
       <div class="fc-art"><span class="big">?</span></div>
       <h4>MYSTERY BONUS</h4>
-      <p>Could be <b>dead spins</b>, or any of the three bonuses &mdash; including <b data-bind="nEpic"></b>.</p>
+      <p>One mystery spin: <b>2 jars</b> = no bonus, <b>3, 4 or 5 jars</b> = that bonus &mdash; up to <b data-bind="nEpic"></b>.</p>
       <div class="fc-odds" id="fcOdds"></div>
       <div class="fc-price"><img class="coin-ic" alt=""><span data-cost="mystery"></span><span class="fc-x" data-bind="xMystery"></span></div>
     </button>
@@ -2144,7 +2144,7 @@ function createAudio(ctx, dest){
     const bind = {spJam:TIERS.jam.spins, spSuper:TIERS.super.spins, spEpic:TIERS.epic.spins, stJam:TIERS.jam.start, stSuper:TIERS.super.start, stEpic:TIERS.epic.start, xJam:BUY.jam+'×', xSuper:BUY.super+'×', xMystery:BUY.mystery+'×',
       rt3:RETRIG[3], rt4:RETRIG[4], rt5:RETRIG[5], orbTop:ORB_VALUES[ORB_VALUES.length-1], cap:MAX_WIN_X.toLocaleString()+'×', dgCap:DEGEN.cap, dgTop:DEGEN.mults[DEGEN.mults.length-1], dgEvery:DEGEN.maxEvery, rtp:'96%', nJam:BONUS_NAMES.jam, nSuper:BONUS_NAMES.super, nEpic:BONUS_NAMES.epic};
     document.querySelectorAll('[data-bind]').forEach(el=>{ el.textContent = bind[el.dataset.bind]; });
-    const po = $('ptOdds'); if(po) po.innerHTML = [['dead','#9ca3af','DEAD SPINS'],['jam','#c084fc',BONUS_NAMES.jam],['super','#fbbf24',BONUS_NAMES.super],['epic','#fb7185',BONUS_NAMES.epic]].map(([k,c,n]) => '<div style="color:' + c + '">' + n + '<b>' + MYSTERY[k] + '%</b></div>').join('');
+    const po = $('ptOdds'); if(po) po.innerHTML = [['dead','#9ca3af','NO BONUS (2 JARS)'],['jam','#c084fc',BONUS_NAMES.jam],['super','#fbbf24',BONUS_NAMES.super],['epic','#fb7185',BONUS_NAMES.epic]].map(([k,c,n]) => '<div style="color:' + c + '">' + n + '<b>' + MYSTERY[k] + '%</b></div>').join('');
     // illustration: three cherries on reels 1-3 in different rows = a win
     const layout = [['grape','lemon','C','orange','star'],['C','orange','berry','lemon','grape'],['lemon','grape','star','melon','orange'],['star','C','lemon','berry','melon']];
     $('ptMini').innerHTML = layout.map(r=>r.map(k=> k === 'C' ? '<div class="on">'+SVG.cherry+'</div>' : '<div>'+SVG[k]+'</div>').join('')).join('');
@@ -2240,9 +2240,12 @@ function createAudio(ctx, dest){
     let tk = k;
     if(k === 'mystery') tk = wPick(['dead','jam','super','epic'], [MYSTERY.dead, MYSTERY.jam, MYSTERY.super, MYSTERY.epic]);
     playSfx('buy', k === 'mystery' ? 1 : TIERS[tk].idx); haptic([20,30,60]);
-    if(k === 'mystery') await mysteryReveal(tk); else await sleep(350);
-    spinning = false;
-    startBonus(tk, k === 'mystery' ? (tk === 'dead' ? 'Mystery bonus' : 'Mystery bonus revealed') : 'Bonus purchased');
+    if(k === 'mystery'){                                   // a real mystery spin: the outcome lands as 2 (no bonus), 3, 4 or 5 jars
+      await sleep(250); spinning = false; banner('MYSTERY SPIN', '#be185d'); await sleep(700);
+      mysterySpin = { tier:tk, count:{dead:2, jam:3, super:4, epic:5}[tk] }; spin(); return;
+    }
+    await sleep(350); spinning = false;
+    startBonus(tk, 'Bonus purchased');
   }
   buyBonusBtn.addEventListener('click', ()=>{ sfxClick(); openFeat(); });
   $('featClose').addEventListener('click', ()=>{ sfxClick(); closeBuyModal(); });
@@ -2516,7 +2519,7 @@ function createAudio(ctx, dest){
 
   /* ---- mystery bonus: a quick reveal of which bonus was bought ---- */
   const mystOverlay = $('mystOverlay'), mystCard = $('mystCard');
-  $('fcOdds').innerHTML = [['dead','#9ca3af'],['jam','#c084fc'],['super','#fbbf24'],['epic','#fb7185']].map(([k,c]) => '<span style="--oc:' + c + '">' + (k === 'dead' ? 'DEAD' : TIERS[k].name) + ' <i>' + MYSTERY[k] + '%</i></span>').join('');
+  $('fcOdds').innerHTML = [['dead','#9ca3af'],['jam','#c084fc'],['super','#fbbf24'],['epic','#fb7185']].map(([k,c]) => '<span style="--oc:' + c + '">' + (k === 'dead' ? 'NO BONUS' : TIERS[k].name) + ' <i>' + MYSTERY[k] + '%</i></span>').join('');
   const MYST_KEYS = ['dead','jam','super','epic'], MYST_COL = {dead:'#8a8f9c', jam:'#c084fc', super:'#fbbf24', epic:'#f43f5e'};
   const mystOdds = $('mystOdds');
   mystOdds.innerHTML = MYST_KEYS.map(k => '<div data-k="' + k + '" style="--c:' + MYST_COL[k] + '">' + TIERS[k].name + '<b>' + MYSTERY[k] + '%</b></div>').join('');
@@ -2559,6 +2562,8 @@ function createAudio(ctx, dest){
     if(!inFreeSpins){ const sp = FX.pos(spinBtn); FX.ring(sp.x, sp.y, degenOn ? '#f87171' : '#ffd54a', 62); }
     if(inFreeSpins){
       setMessage('Free Spin — ' + freeSpinsLeft + ' left', true);
+    } else if(mysterySpin){
+      roundWin = 0; setMessage('Mystery spin…', true); twHide();
     } else {
       balance -= cost; roundWin = 0; updateStats(); bump(balanceStat); animateNumber(lastWinEl, 0, 200);
       setMessage(degenOn ? 'Degen spin…' : 'Spinning…', false); twHide();
@@ -2577,7 +2582,7 @@ function createAudio(ctx, dest){
     });
     reelsAreaEl.classList.remove('anticipating', 'bonus-hit'); setMusicTension(false);
 
-    const finals = [], deadBoard = (inFreeSpins && bonusTier === 'dead') ? makeDeadBoard() : null;
+    const finals = [], deadBoard = (inFreeSpins && bonusTier === 'dead') ? makeDeadBoard() : mysterySpin ? makeMysteryBoard(mysterySpin.count) : null;
     const firstGap = turbo ? 280 : 550;
     const stepGap = turbo ? 150 : 260;
     const suspenseGap = turbo ? 650 : 1200;
@@ -2835,6 +2840,26 @@ function createAudio(ctx, dest){
   }
   function twHide(){ cancelAnimationFrame(twRaf); twEl.classList.remove('on'); ledgeEl.classList.remove('counting'); $('winStat').classList.remove('live'); winLbl.textContent = inFreeSpins ? 'TOTAL WIN' : 'WIN'; twShown = 0; }
   /* dead spins: a board that cannot pay and cannot retrigger */
+  let mysterySpin = null;                                   // set by the mystery buy: the next spin lands exactly this many jars and pays nothing
+  function makeMysteryBoard(n){
+    const b = makeDeadBoard(), reels = [0,1,2,3,4].sort(()=> Math.random() - 0.5).slice(0, n);
+    reels.forEach(r=>{ b[r] = b[r].slice(); b[r][Math.floor(Math.random()*ROWS)] = SYMBOLS.find(s => s.scatter); });
+    return b;
+  }
+  async function resolveMystery(m){
+    game.classList.remove('spinning-now'); spinBtn.classList.remove('spinning'); setMusicTension(false); clearWinSeq();
+    const T = ms => sleep(ms*(turbo ? 0.5 : 1));
+    reelData.forEach(rd=> [...rd.stripEl.children].forEach(c=>{ const jar = c.classList.contains('scatter-sym'); c.classList.toggle('win-cell', jar); c.classList.toggle('dim', !jar); }));
+    if(m.tier === 'dead'){
+      playSfx('mystDead'); haptic([80,60,80]); banner('ONLY 2 JARS', '#52525b');
+      setMessage('No bonus — only 2 jars landed', false); await T(1700);
+      reelData.forEach(rd=> [...rd.stripEl.children].forEach(c=> c.classList.remove('win-cell','dim')));
+      spinning = false; spinBtn.disabled = false; updateStats(); return;
+    }
+    celebrateScatters(); banner(m.count + ' JARS!'); await T(1100);
+    spinning = false; setMessage(TIERS[m.tier].name + ' TRIGGERED!', true, true); spinBtn.disabled = true;
+    fsTimer = setTimeout(()=> startBonus(m.tier, 'Mystery spin · ' + m.count + ' jars'), 1100);
+  }
   function makeDeadBoard(){
     for(let k=0;k<400;k++){ const b = []; for(let r=0;r<REEL_COUNT;r++) b.push(pickReelColumn()); if(reelsWithScatter(b) === 0 && computeWins(b, 5).total === 0) return b; }
     const b = [[0,1,2,3],[4,5,6,7]].map(ix => ix.map(i => SYMBOLS[i])); for(let r=2;r<REEL_COUNT;r++) b.push(pickReelColumn().map(c => c.scatter ? SYMBOLS[0] : c)); return b;   // fallback: reels 1 and 2 share no symbol, so nothing can pay
@@ -2851,6 +2876,7 @@ function createAudio(ctx, dest){
 
   /* one landed board, resolved to the end: pays, tumbles, multipliers, the cap, then whatever comes next */
   async function resolveSpin(finals, bet){
+    if(mysterySpin){ const m = mysterySpin; mysterySpin = null; (window.__jamTrace = window.__jamTrace || []).push({mode:'mystery', tier:m.tier, jars:reelsWithScatter(finals), total:0, steps:[], orbs:[]}); return resolveMystery(m); }
     game.classList.remove('spinning-now'); spinBtn.classList.remove('spinning'); setMusicTension(false); clearWinSeq();
     const T = ms => sleep(ms*(turbo ? 0.5 : 1)*(reduceMotion ? 0.5 : 1));
     const fs = inFreeSpins, tier = fs ? (TIERS[bonusTier] || TIERS.jam) : null, degen = degenOn && !fs;
