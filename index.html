@@ -1197,12 +1197,12 @@
   /* --- animated symbols: winning symbols play a 3D animation strip --- */
   .cell .sa{ display:none; position:absolute; left:50%; top:50%; width:calc(var(--ch)*1.5); aspect-ratio:1; translate:-50% -50%; background-size:2000% 100%; background-repeat:no-repeat; pointer-events:none; z-index:1; }
   .game.portrait .cell .sa{ width:calc(var(--cw)*1.5); }
-  .cell.win-cell .sa{ display:block; animation:sa-play .95s steps(19, jump-none) infinite; animation-delay:var(--wdelay,0ms); }
+  .cell.win-cell .sa{ display:block; animation:sa-play .95s steps(20, jump-none) infinite; animation-delay:var(--wdelay,0ms); }
   .cell.win-cell img.sym{ visibility:hidden; }
   @keyframes sa-play{ from{ background-position:0 0; } to{ background-position:100% 0; } }
   html:not(#_):not(#__) .cell.burst{ animation:pop-burst .34s cubic-bezier(.4,0,.6,1) forwards; }
   @keyframes pop-burst{ 0%{ transform:scale(1); filter:brightness(1); } 40%{ transform:scale(1.32); filter:brightness(1.6); opacity:1; } 100%{ transform:scale(.2); filter:brightness(2.5); opacity:0; } }
-  .jorb .oa{ position:relative; z-index:1; width:150%; aspect-ratio:1; background-size:2000% 100%; background-repeat:no-repeat; animation:sa-play 1.1s steps(19, jump-none) infinite; }
+  .jorb .oa{ position:relative; z-index:1; width:150%; aspect-ratio:1; background-size:2000% 100%; background-repeat:no-repeat; animation:sa-play 1.1s steps(20, jump-none) infinite; }
   /* gold 3D numerals */
   .g{ display:inline-block; height:1em; background-size:100% 100%; background-repeat:no-repeat; vertical-align:middle; margin:0 -.045em; }
   .jorb .jv{ font-size:54px; -webkit-text-stroke:0; text-shadow:none; bottom:-14px; filter:drop-shadow(0 0 12px var(--og)); }
@@ -1381,6 +1381,42 @@
   .i4-card{ overflow:hidden; }
   .game.portrait .i4-card, .game.portrait .i4-card.mid{ grid-template-rows:auto auto auto; align-content:center; }
   .game.portrait .i4-card .art{ grid-row:1 / span 3; }
+  /* ===== v9: tumbles burst in place · Jam Orbs land on the reels · tumble-win multiplier reveal ===== */
+  .cell.orbsym{ overflow:visible; z-index:3; }
+  html:not(#_):not(#__) .cell.orbsym.dim{ opacity:1 !important; filter:none !important; }
+  .cell .jorb.incell{ position:relative !important; left:auto; top:auto; width:100% !important; height:100% !important; margin:0 !important; z-index:2; }
+  .cell .jorb.incell .oa{ position:absolute !important; left:50%; top:47%; translate:-50% -50%; width:calc(var(--ch)*2.15) !important; flex:none; }
+  .game.portrait .cell .jorb.incell .oa{ width:calc(var(--cw)*2.15) !important; }
+  .cell .jorb.incell .glow{ inset:6% !important; }
+  .cell .jorb.incell .jv{ font-size:calc(var(--ch)*.2) !important; bottom:3% !important; padding:2px 9px 3px !important; opacity:1; }
+  .cell .jorb.incell.t5 .jv{ font-size:calc(var(--ch)*.23) !important; }
+  .cell.orbsym.oland .jorb{ animation:orb-land .6s cubic-bezier(.2,1.7,.35,1) both; }
+  @keyframes orb-land{ 0%{ transform:scale(.3) rotate(-25deg); filter:brightness(2.5); } 55%{ transform:scale(1.28) rotate(6deg); filter:brightness(1.6); } 100%{ transform:scale(1) rotate(0); filter:none; } }
+  .cell.orbsym .jorb{ transition:opacity .25s, transform .25s; }
+  .cell.orb-used .jorb{ opacity:0; transform:scale(.4); }
+  .cell.orb-fizzle .jorb{ opacity:.25; transform:scale(.8); filter:grayscale(1); transition:all .5s; }
+  .jorb.flying{ z-index:60; }
+  .tmx{ position:absolute; left:50%; top:47%; translate:-50% -50%; z-index:45; pointer-events:none; display:flex; flex-direction:column; align-items:center; gap:4px; padding:14px 40px 20px; border-radius:26px;
+    background:radial-gradient(120% 140% at 50% 0%, rgba(120,40,200,.92), rgba(30,6,60,.94)); box-shadow:0 0 0 3px #ffcf55, 0 0 0 7px rgba(80,20,120,.8), 0 0 40px rgba(255,200,80,.55), 0 18px 40px rgba(0,0,0,.6);
+    opacity:0; transform:scale(.4); transition:opacity .22s, transform .35s cubic-bezier(.2,1.6,.4,1); }
+  .tmx.on{ opacity:1; transform:scale(1); }
+  .tmx.out{ opacity:0; transform:scale(1.25); transition:opacity .3s, transform .3s; }
+  .tmx-l{ font-family:'Luckiest Guy',cursive; font-size:24px; letter-spacing:.06em; color:#ffe7a0; text-shadow:0 2px 0 #4a1a00; }
+  .tmx-r{ display:flex; align-items:center; gap:16px; font-size:76px; height:1em; line-height:1; }
+  .tmx-r .g{ height:1em; }
+  .tmx-x{ font-size:.9em; display:flex; filter:drop-shadow(0 0 12px rgba(255,90,200,.9)); }
+  .tmx-x.pop{ animation:tmx-pop .38s cubic-bezier(.2,1.8,.4,1); }
+  @keyframes tmx-pop{ 0%{ transform:scale(1.7); } 100%{ transform:scale(1); } }
+  .tmx-x.gone{ opacity:0; transform:scale(.3); transition:all .25s; }
+  .tmx.slam{ animation:tmx-slam .55s cubic-bezier(.2,1.6,.35,1); }
+  .tmx.slam .tmx-b{ filter:drop-shadow(0 0 18px #ffd54a); }
+  .tmx.slam .tmx-l{ color:#fff; }
+  @keyframes tmx-slam{ 0%{ transform:scale(1); } 30%{ transform:scale(1.32); } 100%{ transform:scale(1.08); } }
+  .tmx-b{ display:flex; }
+  .game.portrait .tmx-r{ font-size:40px; } .game.portrait .tmx-l{ font-size:15px; }
+  .pt-fcard.maxcap{ background:linear-gradient(135deg, rgba(253,224,71,.16), rgba(255,255,255,.03)); }
+  .pt-fcard.maxcap h4{ font-size:24px; }
+  .pt-fcard.maxcap .capbig{ font-family:'Luckiest Guy',cursive; font-size:52px; line-height:1; color:#fde047; text-shadow:0 3px 0 #7a3a00, 0 0 24px rgba(253,224,71,.6); margin:4px 0 8px; }
 </style>
 </head>
 <body>
@@ -1464,7 +1500,7 @@
       <div class="icard" style="--c:#fbbf24;--i:2"><svg class="icard-crown" viewBox="0 0 24 24"><path fill="#ffd54a" stroke="#2f1d10" stroke-width="1" stroke-linejoin="round" d="M2 8l4 3 6-7 6 7 4-3-2 10H4L2 8z"/></svg>
         <div class="icard-ico"><span class="gift">&#127873;</span></div>
         <h3 class="display-font">BONUS MENU</h3>
-        <p>Buy a bonus, switch on the ante bet, or go all-in with Degen Mode.</p></div>
+        <p>Buy a bonus, switch on the ante bet, or go all-in with Max or Nothing.</p></div>
       <div class="icard" style="--c:#22d3ee;--i:3"><svg class="icard-crown" viewBox="0 0 24 24"><path fill="#ffd54a" stroke="#2f1d10" stroke-width="1" stroke-linejoin="round" d="M2 8l4 3 6-7 6 7 4-3-2 10H4L2 8z"/></svg>
         <div class="icard-ico"><video id="introCoin" muted loop playsinline autoplay></video></div>
         <h3 class="display-font">BIG WINS</h3>
@@ -1500,27 +1536,31 @@
     </div>
     <div class="pt-panel" id="ptFeatures">
       <div class="pt-fgrid">
+        <div class="pt-fcard wide maxcap" style="--c:#fde047"><h4 class="display-font">MAX WIN</h4>
+          <div class="capbig"><span data-bind="cap"></span> YOUR BET</div>
+          <p>This is the most one round can ever pay: the spin, every tumble, and the whole bonus it triggers, all added together. When a round reaches it, it ends right away and pays the full amount. At your current bet that is <b id="ptCapNow"></b> credits.</p>
+          <p>The same cap applies to bought bonuses, the Mystery Bonus, the ante bet and Max or Nothing.</p></div>
         <div class="pt-fcard" style="--c:#a78bfa"><h4 class="display-font">1024 WAYS TO WIN</h4>
           <div class="pt-mini" id="ptMini"></div>
           <p>No paylines! Matching symbols on neighbouring reels from the left, in <b>any row</b>, make a win. Three cherries on reels 1&ndash;3 pay, wherever they sit.</p></div>
         <div class="pt-fcard wide" style="--c:#f472b6"><h4 class="display-font">THREE BONUSES</h4>
           <ul>
-            <li><b data-bind="nJam"></b> (jar on 3 reels): <b><span data-bind="spJam"></span></b> free spins, multiplier starts at &times;<span data-bind="stJam"></span>. <b>Jam Orbs</b> boost one spin each.</li>
+            <li><b data-bind="nJam"></b> (jar on 3 reels): <b><span data-bind="spJam"></span></b> free spins, multiplier starts at &times;<span data-bind="stJam"></span>. <b>Jam Orbs</b> multiply that spin&rsquo;s tumble win.</li>
             <li><b data-bind="nSuper"></b> (4 reels): <b><span data-bind="spSuper"></span></b> free spins, starts at &times;<span data-bind="stSuper"></span>. Orbs are <b>sticky</b> &mdash; their value joins the multiplier for the rest of the bonus.</li>
             <li><b data-bind="nEpic"></b> (5 reels): <b><span data-bind="spEpic"></span></b> free spins, starts at &times;<span data-bind="stEpic"></span>, sticky orbs, and the Jam Meter fills faster.</li>
             <li><b>Jam Meter:</b> every winning tumble fills a pip. A full meter adds <b>+1</b> to the multiplier, and it never resets during the bonus.</li>
-            <li><b>Jam Orbs</b> can drop on any winning free spin, worth up to <b>&times;<span data-bind="orbTop"></span></b>. Jars on 3 / 4 / 5 reels during a bonus add <b><span data-bind="rt3"></span> / <span data-bind="rt4"></span> / <span data-bind="rt5"></span></b> spins.</li>
+            <li><b>Jam Orbs</b> land on the reels like any other symbol during free spins and stay put through the tumbles. When the tumbles stop, the whole <b>tumble win</b> is multiplied by the Jam Meter plus every orb on the board. Orbs are worth up to <b>&times;<span data-bind="orbTop"></span></b>. Jars on 3 / 4 / 5 reels during a bonus add <b><span data-bind="rt3"></span> / <span data-bind="rt4"></span> / <span data-bind="rt5"></span></b> spins.</li>
             <li>One round never pays more than <b data-bind="cap"></b> your bet.</li>
           </ul></div>
         <div class="pt-fcard" style="--c:#fbbf24"><h4 class="display-font">BONUS MENU</h4>
           <div class="pt-gift">&#127873;</div>
           <p><b>Buy</b> <span data-bind="nJam"></span> (<b data-bind="xJam"></b>) or <span data-bind="nSuper"></span> (<b data-bind="xSuper"></b>).</p>
           <p><b>Mystery Bonus</b> (<b data-bind="xMystery"></b>): one of four outcomes, with these exact chances:</p><div class="pt-odds" id="ptOdds"></div>
-          <p><b>Ante bet:</b> +20% per spin for about double the bonus chance.</p>
+          <p><b>Ante bet:</b> <span data-bind="anteCost"></span>&times; the cost per spin; bonuses land about <span data-bind="anteX"></span>&times; more often (1 in <span data-bind="trigA"></span> spins instead of 1 in <span data-bind="trigB"></span>).</p>
           <p class="pt-now" id="ptBuyNow"></p></div>
-        <div class="pt-fcard" style="--c:#f87171"><h4 class="display-font">DEGEN MODE</h4>
-          <p>One board, no tumbles, no bonus. Any win can be hit by a random multiplier up to <b>&times;<span data-bind="dgTop"></span></b>.</p>
-          <p>The max win is <b><span data-bind="dgCap"></span>&times;</b> your bet and lands about <b>1 in <span data-bind="dgEvery"></span></b> spins.</p></div>
+        <div class="pt-fcard" style="--c:#f87171"><h4 class="display-font">MAX OR NOTHING</h4>
+          <p>Each spin costs <b><span data-bind="dgCost"></span>&times; your bet</b>. One board, no tumbles, no bonus. Any win is hit by a random multiplier up to <b>&times;<span data-bind="dgTop"></span></b>.</p>
+          <p>It plays for the slot&rsquo;s full max win of <b><span data-bind="dgCap"></span>&times; your bet</b> (<span data-bind="dgRoi"></span>&times; the spin cost), which lands about <b>1 in <span data-bind="dgEvery"></span></b> spins.</p></div>
         <div class="pt-fcard" style="--c:#22d3ee"><h4 class="display-font">WIN CELEBRATIONS</h4>
           <div class="pt-tier"><span class="chip coin">1&times; +</span><span>A shower of <b>JammmyCoins</b></span></div>
           <div class="pt-tier"><span class="chip">BIG WIN</span><em>10&times;</em><span>your bet or more</span></div>
@@ -1561,9 +1601,10 @@
   </div>
   <div class="feat-grid">
     <button class="fcard" id="fcAnte" style="--c:#22d3ee;--i:0" aria-pressed="false">
-      <div class="fc-art"><span class="big">2&times;</span></div>
+      <div class="fc-art"><span class="big"><span data-bind="anteX"></span>&times;</span></div>
       <h4>ANTE BET</h4>
-      <p>Pay <b>20% more</b> per spin for about <b>double the chance</b> to trigger a bonus. Wins still pay on your base bet.</p>
+      <p>Each spin costs <b><span data-bind="anteCost"></span>&times; your bet</b>, and bonuses land about <b><span data-bind="anteX"></span>&times; more often</b> (1 in <span data-bind="trigA"></span> spins). Wins still pay on your base bet.</p>
+      <div class="fc-price"><img class="coin-ic" alt=""><span data-cost="antespin"></span><span class="fc-x">per spin</span></div>
       <div class="fc-sw"></div>
     </button>
     <button class="fcard" data-buy="jam" style="--c:#c084fc;--i:1">
@@ -1587,13 +1628,14 @@
     </button>
     <button class="fcard" id="fcDegen" style="--c:#f87171;--i:4" aria-pressed="false">
       <div class="fc-art"><span class="big"><span data-bind="dgCap"></span>&times;</span></div>
-      <h4>DEGEN MODE</h4>
-      <p>No bonus, no tumbles. Any win can be hit by a multiplier up to <b>&times;<span data-bind="dgTop"></span></b>. Max win <b><span data-bind="dgCap"></span>&times;</b> &mdash; about <b>1 in <span data-bind="dgEvery"></span></b> spins.</p>
+      <h4>MAX OR NOTHING</h4>
+      <p>Each spin costs <b><span data-bind="dgCost"></span>&times; your bet</b>. One board, no tumbles &mdash; any win is hit by a multiplier up to <b>&times;<span data-bind="dgTop"></span></b>. Max win <b><span data-bind="dgCap"></span>&times; your bet</b> (<span data-bind="dgRoi"></span>&times; the cost), about 1 in <span data-bind="dgEvery"></span> spins.</p>
+      <div class="fc-price"><img class="coin-ic" alt=""><span data-cost="degenspin"></span><span class="fc-x">per spin</span></div>
       <div class="fc-sw"></div>
     </button>
   </div>
   <div class="feat-confirm" id="featConfirm"><span id="featConfirmText"></span><span class="sp"></span><span class="btns"><button class="no" id="featNo">Cancel</button><button class="yes" id="featYes">Buy now</button></span></div>
-  <div class="feat-foot">Every option is tuned to about <b data-bind="rtp"></b> RTP &middot; max win <b data-bind="cap"></b> your bet (<span data-bind="dgCap"></span>&times; in Degen Mode)</div>
+  <div class="feat-foot">Every option is tuned to about <b data-bind="rtp"></b> RTP &middot; max win <b data-bind="cap"></b> your bet in every mode</div>
 </div>
 
 <div class="sheet-backdrop light" id="themeBackdrop"></div>
@@ -1668,7 +1710,7 @@
   })();
   const GMAP = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','x':'x','\u00d7':'x','+':'plus',',':'comma','.':'dot'};
   function goldNum(el, str){ str = String(str); if(el.__g === str) return; el.__g = str; let h = ''; for(const ch of str){ const k = GMAP[ch]; if(k) h += '<i class="g g-' + k + '"></i>'; } el.innerHTML = h; }
-  const MATH = {"SYMBOLS":[{"key":"cherry","weight":36,"pay":{"3":1,"4":1,"5":1}},{"key":"lemon","weight":34,"pay":{"3":1,"4":1,"5":1}},{"key":"grape","weight":32,"pay":{"3":1,"4":1,"5":1}},{"key":"orange","weight":30,"pay":{"3":1,"4":1,"5":2}},{"key":"berry","weight":24,"pay":{"3":1,"4":2,"5":3}},{"key":"melon","weight":18,"pay":{"3":2,"4":3,"5":8}},{"key":"star","weight":12,"pay":{"3":4,"4":10,"5":30}},{"key":"gem","weight":8,"pay":{"3":10,"4":30,"5":150}},{"key":"jar","weight":4.582,"scatter":true}],"PAY_UNIT":0.2,"CAP":5000,"JAR_W":{"base":4.582,"ante":5.963,"fs":8},"ANTE_COST":1.2,"TIERS":{"jam":{"spins":10,"start":1,"pips":5,"orbChance":0.2106,"orbDouble":0.15,"sticky":false},"super":{"spins":12,"start":3,"pips":5,"orbChance":0.1526,"orbDouble":0.15,"sticky":true},"epic":{"spins":15,"start":8,"pips":4,"orbChance":0.3241,"orbDouble":0.15,"sticky":true}},"RETRIG":{"3":5,"4":8,"5":10},"ORB_VALUES":[2,3,5,10,20,50,100],"ORB_WEIGHTS":[40,25,16,10,5,3,1],"BUY":{"jam":30,"super":100,"mystery":100},"MYSTERY":{"dead":33,"jam":19.5,"super":25.5,"epic":22},"DEAD_SPINS":6,"DEGEN":{"cap":40,"mults":[1,2,3,5,10,20,50,100,200],"weights":[70,15,6,4,2,1,0.406,0.244,0.162],"maxEvery":273}};
+  const MATH = {"SYMBOLS":[{"key":"cherry","weight":36,"pay":{"3":1,"4":1,"5":1}},{"key":"lemon","weight":34,"pay":{"3":1,"4":1,"5":1}},{"key":"grape","weight":32,"pay":{"3":1,"4":1,"5":1}},{"key":"orange","weight":30,"pay":{"3":1,"4":1,"5":2}},{"key":"berry","weight":24,"pay":{"3":1,"4":2,"5":3}},{"key":"melon","weight":18,"pay":{"3":2,"4":3,"5":8}},{"key":"star","weight":12,"pay":{"3":4,"4":10,"5":30}},{"key":"gem","weight":8,"pay":{"3":10,"4":30,"5":150}},{"key":"jar","weight":4.582,"scatter":true}],"PAY_UNIT":0.2,"CAP":5000,"JAR_W":{"base":4.582,"ante":11.22,"fs":8},"ANTE_COST":3,"TIERS":{"jam":{"spins":10,"start":1,"pips":5,"orbChance":0.272,"orbDouble":0.15,"sticky":false},"super":{"spins":12,"start":3,"pips":5,"orbChance":0.186,"orbDouble":0.15,"sticky":true},"epic":{"spins":15,"start":8,"pips":4,"orbChance":0.385,"orbDouble":0.15,"sticky":true}},"RETRIG":{"3":5,"4":8,"5":10},"ORB_VALUES":[2,3,5,10,20,50,100],"ORB_WEIGHTS":[40,25,16,10,5,3,1],"BUY":{"jam":30,"super":100,"mystery":100},"MYSTERY":{"dead":33,"jam":17.6,"super":25.5,"epic":23.9},"DEAD_SPINS":6,"DEGEN":{"cost":20,"cap":5000,"mults":[2,5,10,25,50,100,250,500,1000],"weights":[30,30,15,10,12,7,4.3,1.72,0.86],"maxEvery":20900},"ANTE_X":9.5,"TRIG_BASE":162,"TRIG_ANTE":17};
   const SYMBOLS = [
     { key:'cherry', svg:SVG.cherry }, { key:'lemon', svg:SVG.lemon }, { key:'grape', svg:SVG.grape }, { key:'orange', svg:SVG.orange },
     { key:'berry', svg:SVG.berry }, { key:'melon', svg:SVG.melon }, { key:'star', svg:SVG.star }, { key:'gem', svg:SVG.gem },
@@ -2244,8 +2286,11 @@ function createAudio(ctx, dest){
   function reelsWithScatter(finals){
     return finals.reduce((n,col)=> n + (col.some(s=>s.scatter) ? 1 : 0), 0);
   }
+  function makeOrbSym(v){ return {key:'orb', orb:true, value:v}; }
   function cellEl(sym){
     const c = document.createElement('div');
+    if(sym.orb){ const t = ORB_TIER(sym.value); c.className = 'cell orbsym'; c.dataset.k = 'orb';
+      c.innerHTML = '<div class="jorb incell t' + t + '"><span class="glow"></span><i class="oa oa' + t + '"></i><span class="jv on"></span></div>'; goldNum(c.querySelector('.jv'), 'x' + sym.value); return c; }
     c.className = 'cell' + (sym.scatter ? ' scatter-sym' : '');
     c.dataset.k = sym.key;
     if(sym.key==='gem' || sym.key==='star') c.style.setProperty('--bd', (-Math.random()*2.6).toFixed(2)+'s');
@@ -2299,6 +2344,7 @@ function createAudio(ctx, dest){
   function refreshPaytable(){
     renderPays();
     const bet = BET_STEPS[betIndex];
+    if($('ptCapNow')) $('ptCapNow').textContent = (MAX_WIN_X*bet).toLocaleString();
     $('ptBuyNow').textContent = 'At a bet of ' + bet + ': ' + (BUY.jam*bet).toLocaleString() + ' / ' + (BUY.super*bet).toLocaleString() + ' / ' + (BUY.mystery*bet).toLocaleString() + ' credits';
   }
   function showPtTab(name){
@@ -2309,7 +2355,7 @@ function createAudio(ctx, dest){
   function buildPaytable(){
     $('ptJar').src = SYMBOLS.find(s=>s.scatter).img;
     const bind = {spJam:TIERS.jam.spins, spSuper:TIERS.super.spins, spEpic:TIERS.epic.spins, stJam:TIERS.jam.start, stSuper:TIERS.super.start, stEpic:TIERS.epic.start, xJam:BUY.jam+'×', xSuper:BUY.super+'×', xMystery:BUY.mystery+'×',
-      rt3:RETRIG[3], rt4:RETRIG[4], rt5:RETRIG[5], orbTop:ORB_VALUES[ORB_VALUES.length-1], cap:MAX_WIN_X.toLocaleString()+'×', dgCap:DEGEN.cap, dgTop:DEGEN.mults[DEGEN.mults.length-1], dgEvery:DEGEN.maxEvery, rtp:'96%', nJam:BONUS_NAMES.jam, nSuper:BONUS_NAMES.super, nEpic:BONUS_NAMES.epic};
+      rt3:RETRIG[3], rt4:RETRIG[4], rt5:RETRIG[5], orbTop:ORB_VALUES[ORB_VALUES.length-1], cap:MAX_WIN_X.toLocaleString()+'×', dgCap:MAX_WIN_X.toLocaleString(), dgTop:DEGEN.mults[DEGEN.mults.length-1].toLocaleString(), dgEvery:DEGEN.maxEvery.toLocaleString(), dgCost:DEGEN.cost, dgRoi:(MAX_WIN_X/DEGEN.cost), anteCost:ANTE_COST, anteX:MATH.ANTE_X, trigB:MATH.TRIG_BASE, trigA:MATH.TRIG_ANTE, rtp:'96%', nJam:BONUS_NAMES.jam, nSuper:BONUS_NAMES.super, nEpic:BONUS_NAMES.epic};
     document.querySelectorAll('[data-bind]').forEach(el=>{ el.textContent = bind[el.dataset.bind]; });
     const po = $('ptOdds'); if(po) po.innerHTML = [['dead','#9ca3af','NO BONUS (2 JARS)'],['jam','#c084fc',BONUS_NAMES.jam],['super','#fbbf24',BONUS_NAMES.super],['epic','#fb7185',BONUS_NAMES.epic]].map(([k,c,n]) => '<div style="color:' + c + '">' + n + '<b>' + MYSTERY[k] + '%</b></div>').join('');
     // illustration: three cherries on reels 1-3 in different rows = a win
@@ -2373,8 +2419,8 @@ function createAudio(ctx, dest){
 
   function bump(el){ el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'), 180); }
   /* ===== bonus menu: ante bet, bonus buys, mystery bonus, Degen Mode ===== */
-  function spinCost(){ const bet = BET_STEPS[betIndex]; return (anteOn && !degenOn) ? Math.round(bet*ANTE_COST) : bet; }
-  function buyCost(k){ return BET_STEPS[betIndex]*BUY[k]; }
+  function spinCost(){ const bet = BET_STEPS[betIndex]; return degenOn ? bet*DEGEN.cost : anteOn ? Math.round(bet*ANTE_COST) : bet; }
+  function buyCost(k){ return BET_STEPS[betIndex]*(k === 'degenspin' ? DEGEN.cost : k === 'antespin' ? ANTE_COST : BUY[k]); }
   const featModal = $('featModal'), featConfirm = $('featConfirm'), featConfirmText = $('featConfirmText'), featState = $('featState'), fcAnte = $('fcAnte'), fcDegen = $('fcDegen'), betLbl = $('betLbl');
   const marqueeSpan = document.querySelector('.marquee span'), linesNum = document.querySelector('.lines-num'), linesLabel = document.querySelector('.lines-label');
   const BUY_NAMES = {jam:BONUS_NAMES.jam, super:BONUS_NAMES.super, mystery:'MYSTERY BONUS'};
@@ -2382,17 +2428,17 @@ function createAudio(ctx, dest){
   function updateBuyBtn(){
     buyBonusBtn.disabled = spinning || inFreeSpins;
     buyBonusBtn.classList.toggle('ante', anteOn && !degenOn); buyBonusBtn.classList.toggle('degen', degenOn);
-    featState.textContent = degenOn ? 'DEGEN ON' : anteOn ? 'ANTE ON' : 'BUY · ANTE';
+    featState.textContent = degenOn ? 'MAX OR NOTHING' : anteOn ? 'ANTE ON' : 'BUY · ANTE';
   }
   function updateStats(){
     animateNumber(balanceEl, balance, 450); betDisplay.textContent = spinCost();
-    betLbl.innerHTML = degenOn ? 'BET <b>DEGEN</b>' : anteOn ? 'BET <b>+ANTE</b>' : 'BET';
+    betLbl.innerHTML = degenOn ? 'BET ' + BET_STEPS[betIndex] + ' <b>×' + DEGEN.cost + '</b>' : anteOn ? 'BET ' + BET_STEPS[betIndex] + ' <b>×' + ANTE_COST + ' ANTE</b>' : 'BET';
     updateBuyBtn(); if(featModal.classList.contains('open')) refreshFeat();
   }
   function refreshFeat(){
     $('featBet').textContent = BET_STEPS[betIndex];
     featModal.querySelectorAll('[data-cost]').forEach(e=>{ e.textContent = buyCost(e.dataset.cost).toLocaleString(); });
-    featModal.querySelectorAll('[data-buy]').forEach(b=>{ const poor = balance < buyCost(b.dataset.buy); b.disabled = degenOn || poor; b.classList.toggle('poor', poor && !degenOn); b.classList.toggle('sel', featPick === b.dataset.buy); const fb = b.querySelector('.fc-btn'); if(fb) fb.textContent = degenOn ? 'OFF IN DEGEN MODE' : poor ? 'NOT ENOUGH CREDITS' : 'BUY'; });
+    featModal.querySelectorAll('[data-buy]').forEach(b=>{ const poor = balance < buyCost(b.dataset.buy); b.disabled = degenOn || poor; b.classList.toggle('poor', poor && !degenOn); b.classList.toggle('sel', featPick === b.dataset.buy); const fb = b.querySelector('.fc-btn'); if(fb) fb.textContent = degenOn ? 'OFF IN MAX OR NOTHING' : poor ? 'NOT ENOUGH CREDITS' : 'BUY'; });
     if(featPick && (degenOn || balance < buyCost(featPick))) featPick = null;
     fcAnte.classList.toggle('on', anteOn && !degenOn); fcAnte.setAttribute('aria-pressed', anteOn && !degenOn); fcAnte.disabled = degenOn;
     fcDegen.classList.toggle('on', degenOn); fcDegen.setAttribute('aria-pressed', degenOn);
@@ -2407,15 +2453,15 @@ function createAudio(ctx, dest){
   function closeBuyModal(){ featModal.classList.remove('open'); buyBackdrop.classList.remove('open'); featPick = null; }
   function setAnte(on){
     anteOn = on; playSfx('ante', on); haptic(on ? [12,30,20] : 10);
-    setMessage(on ? 'Ante bet on — more jars on the reels' : 'Ante bet off', on);
+    setMessage(on ? 'Ante bet on — ' + ANTE_COST + '× cost, bonus about ' + MATH.ANTE_X + '× more often' : 'Ante bet off', on);
     if(on){ const p = FX.pos(fcAnte); FX.ring(p.x, p.y, '#22d3ee', 160); FX.burst(p.x, p.y, '#22d3ee', 26, 380); }
     updateStats();
   }
   function setDegen(on){
     degenOn = on; game.classList.toggle('degen', on);
-    marqueeSpan.textContent = on ? 'DEGEN MODE' : 'JAMMINSLOTS'; linesNum.textContent = on ? DEGEN.cap + '×' : '1024'; linesLabel.textContent = on ? 'MAX WIN' : 'WAYS';
+    marqueeSpan.textContent = on ? 'MAX OR NOTHING' : 'JAMMINSLOTS'; linesNum.textContent = on ? MAX_WIN_X.toLocaleString() + '×' : '1024'; linesLabel.textContent = on ? 'MAX WIN' : 'WAYS';
     setMusicMode(on ? 'degen' : 'normal'); if(on){ playSfx('degenOn'); haptic([40,40,120]); } else sfxToggle(false);
-    setMessage(on ? 'Degen Mode — multipliers up to ×' + DEGEN.mults[DEGEN.mults.length-1] + ', max win ' + DEGEN.cap + '×' : 'Degen Mode off', on);
+    setMessage(on ? 'Max or Nothing — ' + DEGEN.cost + '× bet per spin, multipliers up to ×' + DEGEN.mults[DEGEN.mults.length-1].toLocaleString() + ', max win ' + MAX_WIN_X.toLocaleString() + '×' : 'Max or Nothing off', on);
     if(on){ const p = FX.pos(fcDegen); FX.ring(p.x, p.y, '#ef4444', 220); FX.burst(p.x, p.y, '#ef4444', 44, 520); shakeS(); }
     for(let i=0;i<REEL_COUNT;i++) renderReelStatic(i, pickReelColumn());                          // fresh board for the new reel set
     updateStats();
@@ -2774,7 +2820,7 @@ function createAudio(ctx, dest){
     } else {
       if(auto && autoLeft !== Infinity){ autoLeft--; autoLbl(); if(autoLeft <= 0) stopAuto(); }
       balance -= cost; roundWin = 0; updateStats(); bump(balanceStat); animateNumber(lastWinEl, 0, 200);
-      setMessage(degenOn ? 'Degen spin…' : 'Spinning…', false); twHide();
+      setMessage(degenOn ? 'Max or Nothing…' : 'Spinning…', false); twHide();
     }
 
     reelData.forEach((rd,i)=>{
@@ -2791,6 +2837,10 @@ function createAudio(ctx, dest){
     reelsAreaEl.classList.remove('anticipating', 'bonus-hit'); setMusicTension(false);
 
     const finals = [], deadBoard = (inFreeSpins && bonusTier === 'dead') ? makeDeadBoard() : mysterySpin ? makeMysteryBoard(mysterySpin.count) : null;
+    const orbPlan = [];                                                 // free spins: Jam Orbs are decided up front and land with their reel like any symbol
+    { const tk = (inFreeSpins && !deadBoard) ? TIERS[bonusTier] : null;
+      if(tk && Math.random() < tk.orbChance){ const n = Math.random() < tk.orbDouble ? 2 : 1;
+        while(orbPlan.length < n){ const r = Math.floor(Math.random()*REEL_COUNT), row = Math.floor(Math.random()*ROWS); if(!orbPlan.some(o => o.r === r && o.row === row)) orbPlan.push({r, row, v:pickOrb()}); } } }
     const firstGap = turbo ? 280 : 550;
     const stepGap = turbo ? 150 : 260;
     const suspenseGap = turbo ? 650 : 1200;
@@ -2798,7 +2848,8 @@ function createAudio(ctx, dest){
 
     function landNext(i){
       pendingLand = ()=>{ pendingLand = null;
-        const set = deadBoard ? deadBoard[i] : pickReelColumn();
+        let set = deadBoard ? deadBoard[i] : pickReelColumn();
+        { const op = orbPlan.filter(o => o.r === i); if(op.length){ set = set.slice(); op.forEach(o=>{ let row = o.row; if(set[row].scatter || set[row].orb) row = [0,1,2,3].find(k => !set[k].scatter && !set[k].orb); if(row !== undefined) set[row] = makeOrbSym(o.v); }); } }
         const rd = reelData[i];
         rd.winEl.classList.remove('spinning', 'anticipation');
         renderReelStatic(i, set);
@@ -2806,6 +2857,8 @@ function createAudio(ctx, dest){
         rd.stripEl.querySelectorAll('.cell').forEach((c,r)=>{ c.style.setProperty('--r', r); c.classList.add('land'); });
         sfxReelStop(i); if(i === REEL_COUNT-1) sfxReelLoop(false);
         finals[i] = set;
+        set.forEach((sy,row)=>{ if(!sy.orb) return; const c = rd.stripEl.children[row]; if(!c) return; c.classList.add('oland'); const q = FX.pos(c), t = ORB_TIER(sy.value), oc = ORB_COL[t-1];
+          FX.ring(q.x, q.y, oc, 80 + t*30); FX.burst(q.x, q.y, oc, 10 + t*10, 200 + t*80); if(t >= 4){ FX.burst(q.x, q.y, '#ffffff', t*8, 320); shakeS(); } playSfx('orbImpact', t); haptic(t >= 4 ? [30,30,80] : 18); });
         { const fl = document.createElement('div'); fl.className = 'land-flash'; rd.winEl.appendChild(fl); setTimeout(()=> fl.remove(), 420); const bp = FX.pos(rd.winEl); for(let k=0;k<3;k++) FX.burst(bp.x + (k-1)*30, bp.y + rd.winEl.offsetHeight*0.42, '#ffe7a8', 3, 140); }
 
         const landedReelsWithScatter = reelsWithScatter(finals.filter(Boolean));
@@ -3046,6 +3099,34 @@ function createAudio(ctx, dest){
     await o.animate([{transform:'translate(0,0) scale(' + s0 + ')',opacity:1},{transform:'translate(' + (dx*0.5) + 'px,' + (dy*0.5 - 80) + 'px) scale(' + (s0*1.15) + ')',opacity:1,offset:0.5},{transform:'translate(' + dx + 'px,' + dy + 'px) scale(.4)',opacity:0.9}], {duration:560, easing:'cubic-bezier(.45,.05,.6,1)', fill:'forwards'}).finished.catch(()=>{});
     o.remove(); sfxOrbLand(v); const mp = FX.pos(jmMult); FX.ring(mp.x, mp.y, col, 80); FX.burst(mp.x, mp.y, col, 18, 260);
   }
+  /* a Jam Orb leaves its cell and flies to a target (the meter, or the tumble-win plate) */
+  async function orbFly(cell, v, toEl, T){
+    const tier = ORB_TIER(v), col = ORB_COL[tier-1];
+    if(!cell || reduceMotion || !game.animate){ if(cell) cell.classList.add('orb-used'); sfxOrbLand(v); await T(200); return; }
+    const from = gpos(cell), to = gpos(toEl), o = document.createElement('div'); o.className = 'jorb flying t' + tier;
+    o.innerHTML = '<span class="glow"></span><i class="oa oa' + tier + '"></i><span class="jv on"></span>'; goldNum(o.querySelector('.jv'), 'x' + v);
+    o.style.left = from.x + 'px'; o.style.top = from.y + 'px'; game.appendChild(o); cell.classList.add('orb-used');
+    sfxOrbFly(); FX.trail(FX.pos(cell), FX.pos(toEl), col, 520);
+    const dx = to.x - from.x, dy = to.y - from.y;
+    await o.animate([{transform:'translate(0,0) scale(.62)'},{transform:'translate(' + dx*0.5 + 'px,' + (dy*0.5 - 90) + 'px) scale(.85)', offset:.5},{transform:'translate(' + dx + 'px,' + dy + 'px) scale(.32)', opacity:.9}], {duration:520, easing:'cubic-bezier(.45,.05,.6,1)', fill:'forwards'}).finished.catch(()=>{});
+    o.remove(); sfxOrbLand(v); const mp = FX.pos(toEl); FX.ring(mp.x, mp.y, col, 90); FX.burst(mp.x, mp.y, col, 20, 280);
+  }
+  /* end of a free-spin tumble chain: TUMBLE WIN × multiplier = paid */
+  async function multReveal(base, M, pay, flyers, T){
+    const el = document.createElement('div'); el.className = 'tmx'; el.innerHTML = '<div class="tmx-l">TUMBLE WIN</div><div class="tmx-r"><span class="tmx-b"></span><span class="tmx-x"></span></div>'; reelsAreaEl.appendChild(el);
+    const b = el.querySelector('.tmx-b'), x = el.querySelector('.tmx-x');
+    const popX = txt =>{ goldNum(x, txt); x.classList.remove('pop'); void x.offsetWidth; x.classList.add('pop'); };
+    const quick = !flyers.length;                                       // meter only: a short version, so ordinary free spins keep their pace
+    goldNum(b, base.toLocaleString()); void el.offsetWidth; el.classList.add('on'); playSfx('counterTick', 0.4); await T(quick ? 220 : 420);
+    let cur = M - flyers.reduce((a,o)=> a + o.v, 0);
+    if(cur > 1){ sfxOrbFly(); FX.trail(FX.pos(jmMult), FX.pos(x), '#ffd54a', quick ? 300 : 460); await T(quick ? 240 : 380); popX('x' + cur); sfxOrbLand(cur); await T(quick ? 260 : 300); }
+    for(const o of flyers){ await orbFly(o.el, o.v, x, T); cur += o.v; popX('x' + cur); await T(200); }
+    await T(quick ? 120 : 260);
+    x.classList.add('gone'); el.classList.add('slam'); el.querySelector('.tmx-l').textContent = 'TUMBLE WIN × ' + M; goldNum(b, pay.toLocaleString());
+    playSfx('orbImpact', ORB_TIER(M)); sfxTally(650); haptic(M >= 20 ? [30,40,90] : 30);
+    const p = FX.pos(el); FX.ring(p.x, p.y, '#ffd54a', 220); FX.burst(p.x, p.y, '#ffd54a', 40 + Math.min(60, M*2), 520); if(M >= 20){ FX.coins(p.x, p.y, 10, 800); shakeS(); }
+    await T(quick ? 600 : 1000); el.classList.add('out'); setTimeout(()=> el.remove(), 350);
+  }
   /* the live win counter: message bar + the WIN box beside the bet */
   const ledgeEl = document.querySelector('.ledge'), winLbl = $('winStat').querySelector('.lbl');
   const twEl = document.createElement('div'); twEl.className = 'tw-counter'; twEl.innerHTML = '<span class="tw-l"></span><span class="tw-v">0</span><span class="tw-m"></span>'; ledgeEl.appendChild(twEl);
@@ -3109,31 +3190,22 @@ function createAudio(ctx, dest){
     const trace = {bet, mode: fs ? bonusTier : degen ? 'degen' : anteOn ? 'ante' : 'base', orbs:[], steps:[], total:0};
     (window.__jamTrace = window.__jamTrace || []).push(trace); if(window.__jamTrace.length > 80) window.__jamTrace.shift();
     if(scatterCount >= 3){ celebrateScatters(); await T(900); }
-    // 1) Jam Orbs (bonus only): one-spin boost in the Jam Session, sticky in the Super and Epic bonuses
-    let orbSum = 0;
-    if(fs && computeWins(board, bet).total > 0 && Math.random() < tier.orbChance){
-      const n = Math.random() < tier.orbDouble ? 2 : 1;
-      for(let k=0;k<n;k++){
-        const v = pickOrb(); trace.orbs.push(v);
-        setMessage((tier.sticky ? 'STICKY ORB +' : 'JAM ORB ×') + v + '!', true); await dropOrb(v, T, tier.sticky);
-        if(tier.sticky){ jamMult += v; jamRender(0); jamUp('+' + v + ' STICKY!'); } else { orbSum += v; jamRender(orbSum); }
-        await T(220);
-      }
-    }
+    let orbSum = 0, tumbleBase = 0;                                  // free spins: base wins add up over the tumbles, then get multiplied once at the end
     // 2) tumbling chain: pay, burst, drop, repeat until nothing pays (Degen Mode pays one board, no tumbles)
     let spinTotal = 0, step = 0, capped = false;
     while(step < 50){
       const w = computeWins(board, bet); if(w.total === 0) break;
-      const mult = fs ? jamMult + orbSum : 1;
-      let pay = w.total * mult;
-      if(!degen){
+      const mult = 1;
+      let pay = w.total;
+      if(fs) tumbleBase += pay;
+      if(!degen && !fs){
         if(roundWin + pay >= capTotal){ pay = capTotal - roundWin; capped = true; }
         roundWin += pay; balance += pay; if(fs) freeSpinsWinTotal += pay; saveBalance();
       }
       trace.steps.push({board:board.map(col=>col.map(c=>c.key)), base:w.total, mult, pay});
-      spinTotal += pay;
-      if(!degen){ updateStats(); bump(balanceStat); } bump(winStat); if(fs) updateFsUI();
-      if(fs) twSet('TOTAL WIN', freeSpinsWinTotal, mult > 1 ? '\u00d7' + mult : ''); else if(!degen) twSet(step ? 'TUMBLE WIN' : 'WIN', spinTotal); else twSet('WIN', spinTotal);
+      if(!fs) spinTotal += pay;
+      if(!degen && !fs){ updateStats(); bump(balanceStat); } bump(winStat);
+      if(fs) twSet('TUMBLE WIN', tumbleBase); else if(!degen) twSet(step ? 'TUMBLE WIN' : 'WIN', spinTotal); else twSet('WIN', spinTotal);
       if(step === 0) w.groups.slice(0, 2).forEach((g,k)=> setTimeout(()=> playSfx('symWin', g.key), k*90));
       reelData.forEach((rd,r)=> [...rd.stripEl.children].forEach((c,row)=>{ const hit = w.cells.has(r+':'+row); c.style.setProperty('--wdelay',(r*60)+'ms'); c.classList.toggle('win-cell', hit); c.classList.toggle('dim', !hit); }));
       confettiLayer.querySelectorAll('.float-win').forEach(e=> e.remove());
@@ -3167,22 +3239,36 @@ function createAudio(ctx, dest){
       }
       await T(fs ? 520 : 440); step++;
     }
+    if(fs){                                                          // the Jam Orbs on the board (and the meter) multiply the whole tumble win
+      const orbCells = []; board.forEach((col,r)=> col.forEach((c,row)=>{ if(c.orb) orbCells.push({v:c.value, el:reelData[r].stripEl.children[row]}); }));
+      trace.orbs = orbCells.map(o => o.v);
+      if(tumbleBase > 0){
+        if(tier.sticky) for(const o of orbCells){ setMessage('STICKY ORB +' + o.v + '!', true); await orbFly(o.el, o.v, jmMult, T); jamMult += o.v; jamRender(0); jamUp('+' + o.v + ' STICKY!'); await T(300); }
+        const M = jamMult + (tier.sticky ? 0 : orbCells.reduce((a,o)=> a + o.v, 0));
+        let pay = tumbleBase*M; if(roundWin + pay >= capTotal){ pay = capTotal - roundWin; capped = true; }
+        if(M > 1) await multReveal(tumbleBase, M, pay, tier.sticky ? [] : orbCells, T);
+        roundWin += pay; balance += pay; freeSpinsWinTotal += pay; spinTotal = pay; saveBalance(); updateStats(); bump(balanceStat); updateFsUI();
+        twSet('TOTAL WIN', freeSpinsWinTotal, M > 1 ? '\u00d7' + M : ''); trace.mult = M; trace.fsPay = pay;
+        setMessage('WIN +' + pay.toLocaleString() + (M > 1 ? ' · ' + tumbleBase.toLocaleString() + ' × ' + M : ''), true);
+      } else if(orbCells.length){ orbCells.forEach(o=> o.el && o.el.classList.add('orb-fizzle')); setMessage('No win this spin — the orb fizzles', false); await T(520); }
+    }
     // 3) Degen Mode: one random multiplier on the win, capped at the Degen max win
     let degenMax = false;
     if(degen && spinTotal > 0){
-      const m = wPick(DEGEN.mults, DEGEN.weights), cap = DEGEN.cap*bet; trace.degen = m;
+      const m = wPick(DEGEN.mults, DEGEN.weights), cap = MAX_WIN_X*bet; trace.degen = m;
       if(m > 1) await degenReveal(m, T);
       spinTotal = Math.min(cap, spinTotal*m); degenMax = spinTotal >= cap;
       balance += spinTotal; saveBalance(); updateStats(); bump(balanceStat); twSet(degenMax ? 'MAX WIN' : 'WIN', spinTotal, m > 1 ? '\u00d7' + m : ''); bump(winStat);
-      setMessage(degenMax ? 'DEGEN MAX WIN! +' + spinTotal.toLocaleString() : 'WIN +' + spinTotal.toLocaleString() + (m > 1 ? ' · ×' + m : ''), true);
+      setMessage(degenMax ? 'MAX WIN! +' + spinTotal.toLocaleString() : 'WIN +' + spinTotal.toLocaleString() + (m > 1 ? ' · ×' + m : ''), true);
       if(spinTotal >= bet){ flashWin(); winLights(); }
     }
     if(fs) jamRender(0); trace.total = spinTotal;
     reelData.forEach(rd=> [...rd.stripEl.children].forEach(c=>{ c.classList.remove('dim'); }));
     // 4) celebration
-    const ratio = spinTotal/bet;
+    const ratio = degen ? 0 : spinTotal/bet;
     if(capped) await showBigWin(spinTotal, {max:true, kicker:'MAX WIN REACHED', sub:MAX_WIN_X.toLocaleString() + '× YOUR BET'});
-    else if(degenMax) await showBigWin(spinTotal, {max:true, kicker:'DEGEN MODE', sub:DEGEN.cap + '× YOUR BET', quick:true});
+    else if(degenMax) await showBigWin(spinTotal, {max:true, kicker:'MAX OR NOTHING', sub:MAX_WIN_X.toLocaleString() + '× YOUR BET'});
+    else if(degen && spinTotal >= bet*DEGEN.cost*5) await showBigWin(spinTotal);
     else if(ratio >= (fs ? FS_CELEBRATE_X : WIN_TIERS[0][0])) await showBigWin(spinTotal);
     else if(spinTotal >= bet && !fs){ smallCoinBurst(); flyCoins(Math.min(8, 3 + Math.floor(ratio))); sfxTally(650); }
     spinning = false; saveBalance(); updateStats();
@@ -3235,7 +3321,7 @@ function createAudio(ctx, dest){
       d.style.cssText = '--s:' + sz + 'px;--o:' + (far ? .5 : .75) + ';--x0:' + x + 'px;--y0:' + y + 'px;--x1:' + (x+dx) + 'px;--y1:' + (y+dy) + 'px;--d:' + (9 + (i*3)%8) + 's;--dl:' + (-i*1.7) + 's;--rd:' + (30 + (i*7)%30) + 's;--rot:' + (i % 2 ? 360 : -360) + 'deg';
       d.innerHTML = '<img alt="" src="' + ART['bg_' + keys[i % keys.length] + '_' + (far ? 'b2' : 'b1')] + '">'; scene.appendChild(d); });
   })();
-  if(/[?&]debug=1/.test(location.search)) window.__jam = { dropOrb, startBonus, showBigWin, twSet, twHide, setT:(ms)=>sleep(ms) };   // test hook, only with ?debug=1
+  if(/[?&]debug=1/.test(location.search)) window.__jam = { TIERS, dropOrb, startBonus, showBigWin, twSet, twHide, setT:(ms)=>sleep(ms) };   // test hook, only with ?debug=1
   spinBtn.addEventListener('click', spin);
   loadBalance(); updateStats(); refreshMusicBtn();
 
